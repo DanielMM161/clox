@@ -7,5 +7,8 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
         return NULL;
     }
 
-    return realloc(pointer, newSize);    
+    void* results =  realloc(pointer, newSize);
+    if(results == NULL) exit(1);
+
+    return results;
 }
