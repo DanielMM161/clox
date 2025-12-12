@@ -33,7 +33,6 @@ void writeChunk(Chunk* chunk, uint8_t byte, int line);
 void writeChunkLine(Chunk* chunk, int line);
 int getLine(Chunk* chunk, int instruction);
 int addConstant(Chunk* chunk, Value value);
-int getLine(int line);
 void writeConstant(Chunk* chunk, Value value, int line);
 
 #endif
