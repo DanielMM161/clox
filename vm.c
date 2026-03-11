@@ -1,7 +1,6 @@
 #include "vm.h"
 #include "chunk.h"
-#include "common.h"
-#include "debug.h"
+#include "compiler.h"
 #include <stdio.h>
 
 VM vm;
@@ -13,23 +12,23 @@ void resetStack() {
   vm.stackTop = vm.stack;
 }
 void push(Value value) {
-  // Add the value to the actual "empty box"
-  *vm.stackTop = value;
-  // Move the stack pointer to the next "empty box"
-  vm.stackTop++;
+    // Add the value to the actual "empty box"
+    *vm.stackTop = value;
+
+    // Move the stack pointer to the next "empty box"
+    vm.stackTop++;
 }
 Value pop() {
-  // Move the stack pointer back to get to the most recent used slot in the
-  // array
+  // Move the stack pointer back to get to the most recent used slot in the array
   vm.stackTop--;
+
   // Then look up the value at the inded and return it.
   // No need to explicityly "remove" it from the array
   return *vm.stackTop;
 }
 
 static InterpretResult run() {
-    // Read the byte currently pointed at by ip and then advance the instruction
-    // pointer
+    // Read the byte currently pointed at by ip and then advance the instruction pointer
     #define READ_BYTE() (*vm.ip++)
     // Read the next byte of the bytecode, threat resulting number as a index
     // and looks up the corresponding Value in the chunk's constant table
@@ -64,11 +63,21 @@ static InterpretResult run() {
                 printf("\n");
                 break;
             }
-            case OP_NEGATE: BINARY_OP(-); break;
-            case OP_ADD: BINARY_OP(+); break;
-            case OP_SUBTRACT: BINARY_OP(-); break;
-            case OP_MULTIPLY: BINARY_OP(*); break;
-            case OP_DIVIDE: BINARY_OP(/); break;
+            case OP_NEGATE: 
+                BINARY_OP(-); 
+                break;
+            case OP_ADD: 
+                BINARY_OP(+); 
+                break;
+            case OP_SUBTRACT: 
+                BINARY_OP(-); 
+                break;
+            case OP_MULTIPLY: 
+                BINARY_OP(*); 
+                break;
+            case OP_DIVIDE: 
+                BINARY_OP(/); 
+                break;
             case OP_RETURN: {
                 printValue(pop());
                 printf("\n");
@@ -81,8 +90,7 @@ static InterpretResult run() {
     #undef READ_CONSTANT
     #undef BINARY_OP
 }
-InterpretResult interpret(Chunk *chunk) {
-  vm.chunk = chunk;
-  vm.ip = vm.chunk->code;
-  return run();
+InterpretResult interpret(const char* source) {
+  compile(source);
+  return INTERPRET_OK;
 }

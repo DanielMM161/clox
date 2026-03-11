@@ -89,13 +89,13 @@ void writeConstant(Chunk* chunk, Value value, int line) {
 
         // Split the 24-bit index into 3 bytes (little-endian).
 
-        // 1. Lowest 8 bits
+        // Lowest 8 bits
         writeChunk(chunk, (uint8_t)(index & 0xff), line);
 
-        // 2. Middle 8 bits (shift right by 8)
+        // Middle 8 bits (shift right by 8)
         writeChunk(chunk, (uint8_t)((index >> 8) & 0xff), line);
 
-        // 3. Highest 8 bits (shift right by 16)
+        // Highest 8 bits (shift right by 16)
         writeChunk(chunk, (uint8_t)((index >> 16) & 0xff), line);
     }
 }
