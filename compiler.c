@@ -2,23 +2,34 @@
 
 #include "common.h"
 #include "compiler.h"
-#include "scanner.h"
+#include "scanner/scanner.h"
 
-void compile(const char* source) {
-    initScanner(source);
-    int line = -1;
-    for (;;) {
-        // when the scanner provides one, it return the token by value
-        // we do not need to dynamically allocate anything
-        Token token = scanToken();
-        if (token.line != line) {
-            printf("%4d ", token.line);
-            line = token.line;
-        } else {
-            printf(" | ");
-        }
-        printf("%2d '%.*s'\n", token.type, token.length, token.start);
-        if (token.type == TOKEN_EOF)
-            break;
+typedef struct {
+    Token previous;
+    Token current;
+} Parser;
+
+Parser parser;
+
+bool compile(const char *source, Chunk *chunk) {
+  initScanner(source);
+  // 'primes the pump' on the scanner
+  advance();
+  expression();
+  consume(TOKEN_EOF, "Expect end of expression.");
+  return true;
+}
+
+static void advance() {
+    // take old current token and store it in previous field
+    // this will help later to get the lexeme after we watch the token
+    parser.previous = parser.current;
+
+    for(;;) {
+        // ask the scanner for the next token and stores it for later use
+        parser.current = scanToken();
+        if(parser.current.type != TOKEN_ERROR) break;
+
+        errorAtCurrent(parser.current.start);        
     }
 }

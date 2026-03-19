@@ -91,6 +91,24 @@ static InterpretResult run() {
     #undef BINARY_OP
 }
 InterpretResult interpret(const char* source) {
-  compile(source);
-  return INTERPRET_OK;
+    Chunk chunk;
+    initChunk(&chunk);
+
+    // Take a new empty chunk and pass to the compiler
+    // the compiler will take user's program and fill up the chunk with bytecode
+    // if an error is found just notify it
+    if(!compile(source, &chunk)) {
+        freeChunk(&chunk);
+        return INTERPRET_COMPILE_ERROR;
+    }
+
+    // if everything wen well, send the complete chunk over the VM to be executed
+    // when finished, free the chunk
+    vm.chunk = &chunk;
+    vm.ip = vm.chunk->code;
+
+    InterpretResult result = run();
+    freeChunk(&chunk);
+
+    return result;
 }
