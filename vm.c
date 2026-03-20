@@ -1,6 +1,6 @@
 #include "vm.h"
 #include "chunk.h"
-#include "compiler.h"
+#include "compiler/compiler.h"
 #include <stdio.h>
 
 VM vm;
